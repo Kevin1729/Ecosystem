@@ -1,4 +1,5 @@
 import random
+import numpy as np
 class Genome:
     GENESIZE = 5
     NUMATTRIBUTES = 11
@@ -36,25 +37,30 @@ class Genome:
 
         dupeCount = 0
         delCount = 0
+
+        dup_randomness = np.random.random(size=len(self.code))
+        del_randomness = np.random.random(size=len(self.code))
+
         for i in range(Genome.NUMATTRIBUTES,len(self.code),Genome.GENESIZE):
             currentGene = self.code[i:i+Genome.GENESIZE]
 
             #duplication
-            if random.choices([False,True],[1-duplicationRate,duplicationRate])[0]:
+            if dup_randomness[i] < duplicationRate:
                 newCode += currentGene
                 dupeCount += 1
                 #print("Duped gene: " + currentGene)
             #deletion
-            if random.choices([False,True],[1-deletionRate,deletionRate])[0]:
+            if del_randomness[i] < deletionRate:
                 indexOfGene = newCode.find(currentGene)
                 newCode = newCode[:indexOfGene]+newCode[indexOfGene+Genome.GENESIZE:]
                 delCount += 1
                 #print("Deleted gene: " + currentGene)
 
         codeExpanded = list(str(format(int(newCode,16),"0"+str(4*len(newCode))+"b")))
+        code_expand_randomness = np.random.random(size=len(codeExpanded))
         count = 0
         for i in range(len(codeExpanded)):
-            if random.choices([False,True],[1-substitutionRate,substitutionRate])[0]:
+            if code_expand_randomness[i] < substitutionRate:
                 if codeExpanded[i]=="1":
                     codeExpanded[i] = "0"
                 else:

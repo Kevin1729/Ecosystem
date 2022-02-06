@@ -1,11 +1,11 @@
-from Genome import Genome
+from Genome import Genome, AttribCode
 import numpy as np
 import random
 class Brain:
     def __init__(self, Genome):
         self.Genome = Genome
-        self.interneuronActivations = np.random.uniform(-1.0,1.0,(1,16))
-        
+        self.interneuron_activations_1H = np.random.uniform(-1.0,1.0,(1,16))
+
         visionRadius = 1 + int(self.Genome.attributeCode[8],16)//4
 
         self.numInputNeurons = (2 * visionRadius ** 2 + 2 * visionRadius) + 12
@@ -35,15 +35,19 @@ class Brain:
                     self.HOAdjacencyMatrix[inputID%16][outputID%4] += weight
                 elif int(gene[7])==1:
                     self.IHAdjacencyMatrix[inputID%16][outputID] += weight
+
     def think(self, sensoryInput):
         if np.size(sensoryInput) != self.numInputNeurons:
             return "Bruh bad sensory inputs"
-        for i in range(int(self.Genome.attributeCode[9],16)+1):
-            inputVector = np.hstack((self.interneuronActivations,sensoryInput,)) #1x32 input vector
-            self.interneuronActivations = np.tanh(np.matmul(inputVector,self.IHAdjacencyMatrix)) #1x32 times 32x16 
+        H = len(self.interneuron_activations_1H[0])
+        inputVector = np.zeros((1, len(self.interneuron_activations_1H[0]) + len(sensoryInput[0])))
+        inputVector[:, H:] = sensoryInput
+        inputVector[:, :H] = self.interneuron_activations_1H
+        for i in range(int(self.Genome.attributeCode[AttribCode.BRAIN_SPEED], 16) + 1):
+            inputVector[:, :H] = np.tanh(np.matmul(inputVector, self.IHAdjacencyMatrix)) #1x32 times 32x16 
             #print("Fed forward")
-        hiddenVector = np.hstack((self.interneuronActivations,sensoryInput,)) #1x32 hidden vector
-        outputVector = np.tanh(np.matmul(hiddenVector,self.HOAdjacencyMatrix)) #1x32 times 32x16
+        hiddenVector = inputVector
+        outputVector = np.tanh(np.matmul(hiddenVector, self.HOAdjacencyMatrix)) #1x32 times 32x16
         return outputVector
-            
+
 
