@@ -2,6 +2,7 @@ import random
 class Genome:
     GENESIZE = 5
     NUMATTRIBUTES = 11
+
     def __init__(self,code):
         #11 attributes: Max Speed, Max Health, Max Fullness, Max Energy, Max Defense, Max Attack, Growth Rate, Gestation Period, Vision, Brain Speed, Litter Size
         
@@ -87,3 +88,16 @@ class Genome:
                     #print("Taking from parent 2")
                     recombinedGenome += str(format(int(genome2.behaviorGenes[i],2),"0"+str(Genome.GENESIZE)+"x"))
         return Genome(recombinedGenome)
+
+class AttribCode:
+    MAX_SPEED        = 0
+    MAX_HEALTH       = 1
+    MAX_FULLNESS     = 2
+    MAX_ENERGY       = 3
+    MAX_DEFENSE      = 4
+    MAX_ATTACK       = 5
+    GROWTH_RATE      = 6
+    GESTATION_PERIOD = 7
+    VISION           = 8
+    BRAIN_SPEED      = 9
+    LITTER_SIZE      = 10
