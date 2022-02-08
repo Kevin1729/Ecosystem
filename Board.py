@@ -7,7 +7,7 @@ class Board:
         self.time = 0
         self.boardHeight = boardHeight
         self.boardWidth = boardWidth
-        self.grassDistribution = np.ones((self.boardHeight,self.boardWidth))
+        self.grassDistribution = 3*np.ones((self.boardHeight,self.boardWidth))
         self.creatures = creatureList
 
         
@@ -185,7 +185,7 @@ class Board:
             self.creaturesDistribution[creature.ypos][creature.xpos].append(creature)
         self.removeCollisions()
         self.time += 1
-        #self.season = (self.time // 20)%4
+        self.season = (self.time // 20)%4
         grassGrowthProb = 0
         if self.season == 0:
             grassGrowthProb = 1/60

@@ -27,7 +27,7 @@ class Genome:
         return 1 - diffCount/max([len(genome1.code),len(genome2.code)])
 
     
-    def getMutatedGenome(self,substitutionRate = 0.05,duplicationRate = 0.01,deletionRate = 0.01):
+    def getMutatedGenome(self,substitutionRate = 0.05,duplicationRate = 0.005,deletionRate = 0.005):
         #outputs a mutated Genome
         #codeExpanded = list(str(bin(int(self.code,16)))[2:])
         
