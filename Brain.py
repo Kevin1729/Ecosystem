@@ -38,7 +38,8 @@ class Brain:
 
     def think(self, sensoryInput):
         if np.size(sensoryInput) != self.numInputNeurons:
-            return "Bruh bad sensory inputs"
+            print( "Bruh bad sensory inputs")
+            return 0
         H = len(self.interneuron_activations_1H[0])
         inputVector = np.zeros((1, len(self.interneuron_activations_1H[0]) + len(sensoryInput[0])))
         inputVector[:, H:] = sensoryInput

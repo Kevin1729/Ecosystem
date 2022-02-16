@@ -2,10 +2,10 @@ import random
 import numpy as np
 class Genome:
     GENESIZE = 5
-    NUMATTRIBUTES = 11
+    NUMATTRIBUTES = 12
 
     def __init__(self,code):
-        #11 attributes: Max Speed, Max Health, Max Fullness, Max Energy, Max Defense, Max Attack, Growth Rate, Gestation Period, Vision, Brain Speed, Litter Size
+        #12 attributes: Max Speed, Max Health, Max Fullness, Max Energy, Max Defense, Max Attack, Growth Rate, Gestation Period, Vision, Brain Speed, Litter Size, Type (predator/prey)
         
         self.code = code
         self.attributeCode = code[:Genome.NUMATTRIBUTES]

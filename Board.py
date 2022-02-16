@@ -7,7 +7,7 @@ class Board:
         self.time = 0
         self.boardHeight = boardHeight
         self.boardWidth = boardWidth
-        self.grassDistribution = np.ones((self.boardHeight,self.boardWidth))
+        self.grassDistribution = 2*np.ones((self.boardHeight,self.boardWidth))
         self.creatures = creatureList
 
         
@@ -126,7 +126,13 @@ class Board:
             sensoryInput.append(self.season/4)
             sensoryInput.append(1)
             sensoryInput.append(random.uniform(-1,1))
-            foundGrass = False
+            foundFood = False
+            if creature.type != 0:
+                nearestPrey = creature.getNearestCreature(self,searchType = 0)
+                if nearestPrey != 0:
+                    sensoryInput[7] = nearestPrey.xpos
+                    sensoryInput[8] = nearestPrey.ypos
+                foundFood = True
             for ring in range(creature.vision):
 
                 x = creature.xpos + ring+1
@@ -137,10 +143,13 @@ class Board:
                         #print("Out of bounds!")
                         sensoryInput.append(0)
                     else:
-                        if self.grassDistribution[y][x]!=0 and not foundGrass:
-                            sensoryInput[7] = x/creature.vision
-                            sensoryInput[8] = y/creature.vision
-                            foundGrass = True
+                        if not foundFood:
+                            if creature.type == 0:
+                                if self.grassDistribution[y][x]!=0:
+                                    sensoryInput[7] = x/creature.vision
+                                    sensoryInput[8] = y/creature.vision
+                                    foundFood = True
+                            
                         
                         location = self.creaturesDistribution[y][x]
                         if len(location)==0:
@@ -163,6 +172,8 @@ class Board:
                         x += 1
                         y += 1
             
+
+
             numpyArr = np.reshape(np.array(sensoryInput),(1,len(sensoryInput)))
             #print("---Creature "+str(creatureNum)+"---")
             creature.act(numpyArr,self)  

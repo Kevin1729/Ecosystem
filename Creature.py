@@ -1,5 +1,6 @@
 from Genome import Genome
 from Brain import Brain
+import random
 
 class Creature:
     def __init__(self,type,Genome,xpos,ypos,age = 1):
@@ -26,6 +27,8 @@ class Creature:
         self.vision = 1 + int(self.Genome.attributeCode[8],16)//4
         self.brainSpeed = 1 + int(attributeCode[9],16)
         self.litterSize = 1 + int(attributeCode[10],16)//2
+        self.type = int(self.Genome.code[11],16)//8
+
 
         self.relativeAge = min(1,self.age/self.maxAge)
         
@@ -45,7 +48,7 @@ class Creature:
         self.isPregnant = False
         self.currentMateGenome = 0
         self.gestationStage = 0
-    
+        
     def updateAge(self):
         self.age += 1
         self.relativeAge = min(1,self.age/self.maxAge)
@@ -140,7 +143,7 @@ class Creature:
         #actionVector[2] -> Eat (if prey, always 1; if predator, attack nearest Creature of type prey)
         #actionVector[3] -> Mate w/ nearest Creature of same type
         if self.health > 0:
-            if actionVector[2] > 0 or self.type == 0:
+            if actionVector[2] > 0 or self.type == 0 or self.type != 0:
                 self.eat(board)
                 #print("Attempting Eating!")
         
@@ -172,14 +175,20 @@ class Creature:
                 board.grassDistribution[self.ypos][self.xpos] -= 1
                 self.fullness = min(self.fullness+30, self.fullnessCap)
                 #print("Ate grass!")
-        if self.type == 1:
+        else:
             prey = self.getNearestCreature(board, 0)
             if prey != 0:
-                prey.health -= max(self.attack - prey.defense,0)
-                self.energy -= 10
-                if prey.health < 0:
-                    self.fullness = min(self.fullness+30, self.fullnessCap)
-                    print("Ate meat!")
+                probability = 0
+                if prey.defense+self.attack != 0:
+                    probability = prey.defense/(prey.defense+self.attack)
+                if random.random()<=probability:
+                    prey.health -= max(self.attack - prey.defense,0)
+                else:
+                    prey.health = 0
+                self.energy -= 0
+                if prey.health <= 0:
+                    self.fullness = self.fullnessCap
+                    #print("Ate meat!")
     def mate(self, board):
         #creatures can only mate if they're not pregnant, and they have reached half of max age
         if self.isPregnant or self.relativeAge<0.5:
