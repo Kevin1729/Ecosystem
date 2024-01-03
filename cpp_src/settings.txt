@@ -1,0 +1,40 @@
+# Environment-specific constants
+MUTATION_DELETION_RATE 0.0001
+MUTATION_INSERTION_RATE 0.0001
+MUTATION_FLIP_RATE 0.0001
+# BOARD_WIDTH 100
+# BOARD_HEIGHT 100
+MAX_CREATURES 3000
+INIT_CREATURES 3000
+GRASS_PERIOD 6
+GRASS_MAX_HEIGHT 5
+GRASS_ENERGY 40
+GRASS_HEALTH 20
+
+# Creature constants
+COST_BRAIN_CONNECTION 1
+COST_MAX_HEALTH 3
+COST_MAX_ENERGY 2
+COST_MAX_SPEED 1
+COST_MOVEMENT 1
+STARVATION 10
+COST_ATTACK 0
+
+# How much energy to regenerate one health
+ENERGY_TO_HEALTH 5
+
+# How much energy when spending one health
+HEALTH_TO_ENERGY_RATIO 0.5
+
+# Coefficient of how much energy gained per kill
+KILL_ENERGY_GAIN 3.0
+
+# Coefficient of how much health gained per kill
+KILL_HEALTH_GAIN 3.0
+
+# Coefficient of how much energy idling
+COEFF_BASE_ENERGY 0.1
+
+# Birth parameters
+BIRTH_THRESHOLD 0.0
+BIRTH_SCATTER 1

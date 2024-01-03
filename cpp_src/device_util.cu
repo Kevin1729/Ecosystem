@@ -63,7 +63,7 @@ __global__ void get_inputs(Board* board, Body* bodies, int num_bodies)
 }
 
 // Does the matrix multiplication, then updates positions
-__global__ void think_and_act(Body* bodies, int num_bodies)
+__global__ void think_and_act(Body* bodies, int num_bodies, int COST_MOVEMENT, double COEFF_BASE_ENERGY, int STARVATION, double HEALTH_TO_ENERGY_RATIO, int ENERGY_TO_HEALTH, int GRASS_MAX_HEIGHT, int GRASS_PERIOD)
 {
     int ix = threadIdx.x + blockIdx.x * blockDim.x;
     if (ix < num_bodies && bodies[ix].m_alive) {
@@ -89,20 +89,23 @@ __global__ void think_and_act(Body* bodies, int num_bodies)
         body.m_energy -= (abs(actions[MOVE_X]) + abs(actions[MOVE_Y])) * COST_MOVEMENT;
         body.m_energy -= ceil(body.m_base_energy_use * COEFF_BASE_ENERGY);
         if (body.m_energy < 0) {
-            body.m_health -= STARVATION;
-            body.m_energy = STARVATION * HEALTH_TO_ENERGY_RATIO * ENERGY_TO_HEALTH;
+            int amount_needed = -body.m_energy;
+            int given_by_health = HEALTH_TO_ENERGY_RATIO * ENERGY_TO_HEALTH;
+            int starvation = amount_needed / given_by_health + (amount_needed % given_by_health == 0);
+            body.m_health -= starvation;
+            body.m_energy = starvation * given_by_health;
         }
-        // // regenerate
-        // else if (body.m_energy >= ENERGY_TO_HEALTH) {
-        //     body.m_energy -= ENERGY_TO_HEALTH;
-        //     body.m_health = min(body.m_health + 1, body.m_max_health);
-        // }
+        // regenerate
+        else if (body.m_energy >= ENERGY_TO_HEALTH) {
+            body.m_energy -= ENERGY_TO_HEALTH;
+            body.m_health = min(body.m_health + 1, body.m_max_health);
+        }
         // grass eating, attacking, and splitting are handled host-side
     }
 }
 
 // Grows grass!
-__global__ void grow_grass(Board* board)
+__global__ void grow_grass(Board* board, int GRASS_MAX_HEIGHT, int GRASS_PERIOD)
 {
     int ix = threadIdx.x + blockIdx.x * blockDim.x;
     int iy = threadIdx.y + blockIdx.y * blockDim.y;

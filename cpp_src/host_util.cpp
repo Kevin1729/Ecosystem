@@ -2,6 +2,7 @@
 #include "Board.h"
 #include "Body.h"
 #include "Creature.h"
+#include "util.h"
 #include <algorithm>
 #include <iostream>
 
