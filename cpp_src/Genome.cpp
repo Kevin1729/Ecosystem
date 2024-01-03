@@ -46,9 +46,10 @@ int Genome::get_litter_size() const
     }
     return max_litter_size;
 }
-void Genome::fill_brain(Body* body) const
+int Genome::fill_brain(Body* body) const
 {
     int idx = WEIGHTS;
+    int num_connections = 0;
     while (idx <= (int)m_bitstring.size() - 16) {
         idx += 16;
         uint16_t bits;
@@ -82,7 +83,9 @@ void Genome::fill_brain(Body* body) const
             // std::cerr << "dest " << dest << ", src " << src << ", weight " << weight << ", type: " << (bits ? "i2h" : "h2o") << '\n';
             body->m_output_weights[dest][src] = weight;
         }
+        num_connections++;
     }
+    return num_connections;
 }
 std::vector<Genome> Genome::get_mutations(int num) const
 {

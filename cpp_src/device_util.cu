@@ -2,6 +2,7 @@
 #include "Body.h"
 #include "device_util.cuh"
 #include "util.h"
+#include <stdio.h>
 
 __device__ int get_delta(int t, int s, int axis)
 {
@@ -65,23 +66,39 @@ __global__ void get_inputs(Board* board, Body* bodies, int num_bodies)
 __global__ void think_and_act(Body* bodies, int num_bodies)
 {
     int ix = threadIdx.x + blockIdx.x * blockDim.x;
-
-    for (int i = 0; i < SIZE_HIDDEN_LAYER; i++) {
-        for (int j = 0; j < SIZE_INPUT_LAYER; j++) {
-            bodies[ix].m_hidden_values[i] += bodies[ix].m_hidden_weights[i][j] * bodies[ix].m_sensory_input[j];
+    if (ix < num_bodies && bodies[ix].m_alive) {
+        Body& body = bodies[ix];
+        double* actions = body.m_output_values;
+        for (int i = 0; i < SIZE_HIDDEN_LAYER; i++) {
+            for (int j = 0; j < SIZE_INPUT_LAYER; j++) {
+                body.m_hidden_values[i] += body.m_hidden_weights[i][j] * body.m_sensory_input[j];
+            }
+            body.m_hidden_values[i] = atan(body.m_hidden_values[i]);
         }
-        bodies[ix].m_hidden_values[i] = atan(bodies[ix].m_hidden_values[i]);
-    }
-    for (int i = 0; i < SIZE_OUTPUT_LAYER; i++) {
-        for (int j = 0; j < SIZE_INPUT_LAYER + SIZE_HIDDEN_LAYER; j++) {
-            bodies[ix].m_output_values[i] += bodies[ix].m_output_weights[i][j] * bodies[ix].m_sensory_input[j];
+        for (int i = 0; i < SIZE_OUTPUT_LAYER; i++) {
+            for (int j = 0; j < SIZE_INPUT_LAYER + SIZE_HIDDEN_LAYER; j++) {
+                body.m_output_values[i] += body.m_output_weights[i][j] * body.m_sensory_input[j];
+            }
+            body.m_output_values[i] = atan(body.m_output_values[i]);
         }
-        bodies[ix].m_output_values[i] = atan(bodies[ix].m_output_values[i]);
+        // always allow a move
+        body.m_x += actions[MOVE_X] * body.m_speed;
+        body.m_x = (body.m_x + BOARD_WIDTH) % BOARD_WIDTH;
+        body.m_y += actions[MOVE_Y] * body.m_speed;
+        body.m_y = (body.m_y + BOARD_HEIGHT) % BOARD_HEIGHT;
+        body.m_energy -= (abs(actions[MOVE_X]) + abs(actions[MOVE_Y])) * COST_MOVEMENT;
+        body.m_energy -= ceil(body.m_base_energy_use * COEFF_BASE_ENERGY);
+        if (body.m_energy < 0) {
+            body.m_health -= STARVATION;
+            body.m_energy = STARVATION * HEALTH_TO_ENERGY_RATIO * ENERGY_TO_HEALTH;
+        }
+        // // regenerate
+        // else if (body.m_energy >= ENERGY_TO_HEALTH) {
+        //     body.m_energy -= ENERGY_TO_HEALTH;
+        //     body.m_health = min(body.m_health + 1, body.m_max_health);
+        // }
+        // grass eating, attacking, and splitting are handled host-side
     }
-    bodies[ix].m_x += bodies[ix].m_output_values[MOVE_X] * bodies[ix].m_speed;
-    bodies[ix].m_x = (bodies[ix].m_x + BOARD_WIDTH) % BOARD_WIDTH;
-    bodies[ix].m_y += bodies[ix].m_output_values[MOVE_Y] * bodies[ix].m_speed;
-    bodies[ix].m_y = (bodies[ix].m_y + BOARD_WIDTH) % BOARD_WIDTH;
 }
 
 // Grows grass!
@@ -89,8 +106,7 @@ __global__ void grow_grass(Board* board)
 {
     int ix = threadIdx.x + blockIdx.x * blockDim.x;
     int iy = threadIdx.y + blockIdx.y * blockDim.y;
-    int idx = iy * BOARD_WIDTH + ix;
-    if (ix < BOARD_WIDTH && iy < BOARD_HEIGHT && board->grass_stage[ix][iy] < GRASS_MAX_HEIGHT) {
+    if (ix < BOARD_WIDTH && iy < BOARD_HEIGHT && board->grass[ix][iy] < GRASS_MAX_HEIGHT) {
         board->grass_stage[ix][iy]++;
         if (board->grass_stage[ix][iy] == GRASS_PERIOD) {
             board->grass_stage[ix][iy] = 0;

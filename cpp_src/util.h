@@ -24,13 +24,36 @@
 #define SIZE_OUTPUT_LAYER BIRTH + 1
 
 // Environment-specific constants
-#define MUTATION_DELETION_RATE 0.1
-#define MUTATION_INSERTION_RATE 0.1
-#define MUTATION_FLIP_RATE 0.1
+#define MUTATION_DELETION_RATE 0.0001
+#define MUTATION_INSERTION_RATE 0.0001
+#define MUTATION_FLIP_RATE 0.0001
 #define BOARD_WIDTH 100
 #define BOARD_HEIGHT 100
-#define GRASS_PERIOD 5
+#define GRASS_PERIOD 10
 #define GRASS_MAX_HEIGHT 5
+#define GRASS_ENERGY 100
+#define GRASS_HEALTH 5
+
+// Creature constants
+#define COST_BRAIN_CONNECTION 1
+#define COST_MAX_HEALTH 3
+#define COST_MAX_ENERGY 2
+#define COST_MAX_SPEED 1
+#define COST_MOVEMENT 1
+#define STARVATION 1
+#define COST_ATTACK 5
+// How much energy to regenerate one health
+#define ENERGY_TO_HEALTH 10
+// How much energy when spending one health
+#define HEALTH_TO_ENERGY_RATIO 0.2
+// Coefficient of how much energy gained per kill
+#define KILL_ENERGY_GAIN 1.0
+// Coefficient of how much health gained per kill
+#define KILL_HEALTH_GAIN 1.0
+// Coefficient of how much energy idling
+#define COEFF_BASE_ENERGY 1.0
+#define BIRTH_THRESHOLD 0.0
+#define BIRTH_SCATTER 1
 
 // Utility functions
 bool mutate_roll(double probability); // rolls true with probability

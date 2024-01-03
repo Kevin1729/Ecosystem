@@ -11,7 +11,7 @@ struct Creature {
     int m_litter_size;
     Body* m_body;
     Genome m_genome;
-    Creature(int x, int y, int health, int id, int pid, Body* body, const Genome& genome);
+    Creature(int x, int y, int health, int energy, int id, int pid, Body* body, const Genome& genome);
 };
 
 #endif // CREATURE_H_

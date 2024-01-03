@@ -14,12 +14,13 @@ struct Body {
     int m_speed;
     int m_max_energy;
     int m_max_health;
+    int m_base_energy_use;
     double m_sensory_input[SIZE_INPUT_LAYER] {};
     double m_hidden_values[SIZE_HIDDEN_LAYER] {}; // Important that this is adjacent to sensory input in device memory (no need for hstacking)
     double m_output_values[SIZE_OUTPUT_LAYER] {};
     double m_hidden_weights[SIZE_HIDDEN_LAYER][SIZE_INPUT_LAYER] {};
     double m_output_weights[SIZE_OUTPUT_LAYER][SIZE_INPUT_LAYER + SIZE_HIDDEN_LAYER] {};
-    Body(int x, int y, int health, const Genome& genome);
+    Body(int x, int y, int health, int energy, const Genome& genome);
 };
 
 #endif // BODY_H_

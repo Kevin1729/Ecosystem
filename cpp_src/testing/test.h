@@ -604,22 +604,14 @@ void print(const T& t, const Args&... args)
 template <typename T>
 void dprint(const T& t)
 {
-#ifndef ONLINE_JUDGE
-#ifdef DEBUG
-    std::cout << t << std::endl;
-#endif
-#endif
+    std::cerr << t << std::endl;
 }
 
 template <typename T, typename... Args>
 void dprint(const T& t, const Args&... args)
 {
-#ifndef ONLINE_JUDGE
-#ifdef DEBUG
-    std::cout << t << " ";
-    print(args...);
-#endif
-#endif
+    std::cerr << t << " ";
+    dprint(args...);
 }
 
 // Fancy variable debugging, stolen from:
