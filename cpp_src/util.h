@@ -27,8 +27,8 @@
 extern double MUTATION_DELETION_RATE;
 extern double MUTATION_INSERTION_RATE;
 extern double MUTATION_FLIP_RATE;
-#define BOARD_WIDTH 100
-#define BOARD_HEIGHT 100
+extern int BOARD_WIDTH;
+extern int BOARD_HEIGHT;
 extern int MAX_CREATURES;
 extern int INIT_CREATURES;
 extern int GRASS_PERIOD;

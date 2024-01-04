@@ -15,7 +15,7 @@ __device__ int get_delta(int t, int s, int axis)
     return d;
 }
 // puts input vectors in-place into bodies
-__global__ void get_inputs(Board* board, Body* bodies, int num_bodies)
+__global__ void get_inputs(Board* board, Body* bodies, int num_bodies, int BOARD_WIDTH, int BOARD_HEIGHT)
 {
     int ix = threadIdx.x + blockIdx.x * blockDim.x;
 
@@ -26,7 +26,8 @@ __global__ void get_inputs(Board* board, Body* bodies, int num_bodies)
         int dist = BOARD_WIDTH + BOARD_HEIGHT;
         for (int i = 0; i < BOARD_WIDTH; i++) {
             for (int j = 0; j < BOARD_HEIGHT; j++) {
-                if (board->grass[i][j]) {
+                int idx = i * BOARD_HEIGHT + j;
+                if (board->grass[idx]) {
                     int dx = get_delta(i, x, BOARD_WIDTH);
                     int dy = get_delta(j, y, BOARD_HEIGHT);
                     int cand_dist = abs(dx) + abs(dy);
@@ -63,7 +64,7 @@ __global__ void get_inputs(Board* board, Body* bodies, int num_bodies)
 }
 
 // Does the matrix multiplication, then updates positions
-__global__ void think_and_act(Body* bodies, int num_bodies, int COST_MOVEMENT, double COEFF_BASE_ENERGY, int STARVATION, double HEALTH_TO_ENERGY_RATIO, int ENERGY_TO_HEALTH, int GRASS_MAX_HEIGHT, int GRASS_PERIOD)
+__global__ void think_and_act(Body* bodies, int num_bodies, int COST_MOVEMENT, double COEFF_BASE_ENERGY, int STARVATION, double HEALTH_TO_ENERGY_RATIO, int ENERGY_TO_HEALTH, int GRASS_MAX_HEIGHT, int GRASS_PERIOD, int BOARD_WIDTH, int BOARD_HEIGHT)
 {
     int ix = threadIdx.x + blockIdx.x * blockDim.x;
     if (ix < num_bodies && bodies[ix].m_alive) {
@@ -105,16 +106,17 @@ __global__ void think_and_act(Body* bodies, int num_bodies, int COST_MOVEMENT, d
 }
 
 // Grows grass!
-__global__ void grow_grass(Board* board, int GRASS_MAX_HEIGHT, int GRASS_PERIOD)
+__global__ void grow_grass(Board* board, int GRASS_MAX_HEIGHT, int GRASS_PERIOD, int BOARD_WIDTH, int BOARD_HEIGHT)
 {
     int ix = threadIdx.x + blockIdx.x * blockDim.x;
     int iy = threadIdx.y + blockIdx.y * blockDim.y;
-    if (ix < BOARD_WIDTH && iy < BOARD_HEIGHT && board->grass[ix][iy] < GRASS_MAX_HEIGHT) {
-        board->grass_stage[ix][iy]++;
-        if (board->grass_stage[ix][iy] == GRASS_PERIOD) {
-            board->grass_stage[ix][iy] = 0;
-            board->grass[ix][iy]++;
-            board->grass[ix][iy] = min(board->grass[ix][iy], GRASS_MAX_HEIGHT);
+    int idx = BOARD_HEIGHT * ix + iy;
+    if (ix < BOARD_WIDTH && iy < BOARD_HEIGHT && board->grass[idx] < GRASS_MAX_HEIGHT) {
+        board->grass_stage[idx]++;
+        if (board->grass_stage[idx] == GRASS_PERIOD) {
+            board->grass_stage[idx] = 0;
+            board->grass[idx]++;
+            board->grass[idx] = min(board->grass[idx], GRASS_MAX_HEIGHT);
         }
     }
 }

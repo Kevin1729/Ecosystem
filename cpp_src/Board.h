@@ -4,9 +4,9 @@
 #include "util.h"
 
 struct Board {
-    int grass[BOARD_WIDTH][BOARD_HEIGHT];
-    int grass_stage[BOARD_WIDTH][BOARD_HEIGHT] {};
-    Board();
+    int* grass;
+    int* grass_stage;
+    Board(int* _grass, int* _grass_stage);
 };
 
 #endif // BOARD_H_

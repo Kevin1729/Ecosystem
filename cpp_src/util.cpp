@@ -7,6 +7,8 @@
 double MUTATION_DELETION_RATE;
 double MUTATION_INSERTION_RATE;
 double MUTATION_FLIP_RATE;
+int BOARD_WIDTH;
+int BOARD_HEIGHT;
 int MAX_CREATURES;
 int INIT_CREATURES;
 int GRASS_PERIOD;
@@ -68,6 +70,8 @@ void read_in_settings()
     oss >> MUTATION_DELETION_RATE;
     oss >> MUTATION_INSERTION_RATE;
     oss >> MUTATION_FLIP_RATE;
+    oss >> BOARD_WIDTH;
+    oss >> BOARD_HEIGHT;
     oss >> MAX_CREATURES;
     oss >> INIT_CREATURES;
     oss >> GRASS_PERIOD;

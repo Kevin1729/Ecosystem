@@ -33,8 +33,9 @@ void eat_and_attack(Board* board, Body bodies[], int num_bodies)
         for (int j = 0; j < BOARD_HEIGHT; j++) {
             for (Body* b : grid[i][j]) {
                 // if attacking, can't eat grass
-                if (board->grass[i][j] && b->m_output_values[ATTACK] <= 0) {
-                    board->grass[i][j]--;
+                int idx = i * BOARD_HEIGHT + j;
+                if (board->grass[idx] && b->m_output_values[ATTACK] <= 0) {
+                    board->grass[idx]--;
                     b->m_energy = std::min(b->m_energy + GRASS_ENERGY, b->m_max_energy);
                     b->m_health = std::min(b->m_health + GRASS_HEALTH, b->m_max_health);
                     // std::cerr << random_int(0, 100) << "EAT\n";

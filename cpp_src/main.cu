@@ -16,7 +16,11 @@ int main()
     // initialize board
     Board* board;
     cudaMallocManaged((void**)&board, sizeof(Board));
-    *board = Board();
+    int* grass;
+    int* grass_stage;
+    cudaMallocManaged((void**)&grass, sizeof(int) * BOARD_WIDTH * BOARD_HEIGHT);
+    cudaMallocManaged((void**)&grass_stage, sizeof(int) * BOARD_WIDTH * BOARD_HEIGHT);
+    *board = Board(grass, grass_stage);
     int id_gen = 0;
     // int MAX_CREATURES = 10000;
     stack<int> available_idx;
@@ -44,14 +48,14 @@ int main()
     while (true) {
         using namespace chrono;
         auto g_start = high_resolution_clock::now();
-        grow_grass<<<grass_grid, grass_block>>>(board, GRASS_MAX_HEIGHT, GRASS_PERIOD);
+        grow_grass<<<grass_grid, grass_block>>>(board, GRASS_MAX_HEIGHT, GRASS_PERIOD, BOARD_WIDTH, BOARD_HEIGHT);
         cudaDeviceSynchronize();
         int dimx = 1024;
         dim3 block(dimx);
         dim3 grid((MAX_CREATURES + block.x - 1) / block.x);
-        get_inputs<<<grid, block>>>(board, bodies, MAX_CREATURES);
+        get_inputs<<<grid, block>>>(board, bodies, MAX_CREATURES, BOARD_WIDTH, BOARD_HEIGHT);
         cudaDeviceSynchronize();
-        think_and_act<<<grid, block>>>(bodies, MAX_CREATURES, COST_MOVEMENT, COEFF_BASE_ENERGY, STARVATION, HEALTH_TO_ENERGY_RATIO, ENERGY_TO_HEALTH, GRASS_MAX_HEIGHT, GRASS_PERIOD);
+        think_and_act<<<grid, block>>>(bodies, MAX_CREATURES, COST_MOVEMENT, COEFF_BASE_ENERGY, STARVATION, HEALTH_TO_ENERGY_RATIO, ENERGY_TO_HEALTH, GRASS_MAX_HEIGHT, GRASS_PERIOD, BOARD_WIDTH, BOARD_HEIGHT);
         cudaDeviceSynchronize();
         auto g_end = high_resolution_clock::now();
         remove_dead(creatures, available_idx);
