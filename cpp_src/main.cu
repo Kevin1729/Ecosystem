@@ -74,6 +74,7 @@ int main()
         int total_energy = 0;
         int total_preds = 0;
         int total_preys = 0;
+        int total_brain_size = 0;
         for (int i = 0; i < MAX_CREATURES; i++) {
             if (bodies[i].m_alive) {
                 x_vec.pb(bodies[i].m_x);
@@ -89,6 +90,9 @@ int main()
                 num_creatures++;
                 total_mass += bodies[i].m_health;
                 total_energy += bodies[i].m_energy;
+            }
+            if (i < (int)creatures.size() && creatures[i].m_body->m_alive) {
+                total_brain_size += creatures[i].m_genome.m_bitstring.size();
             }
         }
         // vector<int> grass_x;
@@ -106,6 +110,7 @@ int main()
         print(total_energy);
         print(total_preds);
         print(total_preys);
+        print(total_brain_size);
         dprint(num_creatures);
         dprint("GPU took", duration_cast<milliseconds>(g_end - g_start).count());
         dprint("CPU took", duration_cast<milliseconds>(end - start).count());

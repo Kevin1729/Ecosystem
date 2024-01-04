@@ -62,7 +62,7 @@ int Genome::fill_brain(Body* body) const
         // 4 bit for dest
         // 7 bit for weight
         int weight_raw = bits & 0b0111'1111;
-        double weight = (double)weight_raw / (1 << 7);
+        double weight = (double)(weight_raw - 1 << 6) / (1 << 7);
         bits >>= 7;
         int dest = bits & 0b1111;
         bits >>= 4;

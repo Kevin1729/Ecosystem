@@ -53,10 +53,13 @@ void eat_and_attack(Board* board, Body bodies[], int num_bodies)
                     if (num_occ >= 2) {
                         // find a victim
                         int victim = random_int(0, num_occ - 1 - 1);
+                        while (!grid[i][j][victim]->m_alive)
+                            victim = random_int(0, num_occ - 1 - 1);
                         // victim can't be self
                         victim += (victim >= k);
                         int amount = grid[i][j][victim]->m_health;
-                        grid[i][j][victim]->m_health -= grid[i][j][k]->m_health; // TODO: implement a better attack system
+                        // grid[i][j][victim]->m_health -= grid[i][j][k]->m_health; // TODO: implement a better attack system
+                        grid[i][j][victim]->m_health = -1; // TODO: implement a better attack system
                         if (grid[i][j][victim]->m_health <= 0) {
                             // std::cerr << "KILLED AT " << i << " " << j << std::endl;
                             // if kill was successful

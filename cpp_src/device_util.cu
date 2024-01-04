@@ -54,6 +54,7 @@ __global__ void get_inputs(Board* board, Body* bodies, int num_bodies, int BOARD
                 bodies[ix].m_sensory_input[NEAREST_CREATURE_X] = dx;
                 bodies[ix].m_sensory_input[NEAREST_CREATURE_Y] = dy;
                 bodies[ix].m_sensory_input[NEAREST_CREATURE_HEALTH] = bodies[i].m_health;
+                bodies[ix].m_sensory_input[NEAREST_CREATURE_PROXIMITY] = bodies[ix].m_speed - (dx + dy);
             }
         }
         bodies[ix].m_sensory_input[HEALTH] = bodies[ix].m_health;

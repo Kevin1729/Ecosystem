@@ -28,12 +28,14 @@ mass = []
 energy = []
 pred = []
 prey = []
+brain = []
 def animate(i):
     title = int(stdin.readline())
     massy = int(stdin.readline())
     energyy = int(stdin.readline())
     predy = int(stdin.readline())
     preyy = int(stdin.readline())
+    brainy = int(stdin.readline())
     time.append(title)
     # grass_x = [int(_) for _ in stdin.readline().split()]
     # grass_y = [int(_) for _ in stdin.readline().split()]
@@ -47,6 +49,7 @@ def animate(i):
     energy.append(energyy / len(x))
     pred.append(predy)
     prey.append(preyy)
+    brain.append(brainy / len(x))
     ax1.clear()
     ax1.set(xlim=(0, width), ylim=(0, height))
     ax1.autoscale(False)
@@ -55,14 +58,17 @@ def animate(i):
     ax1.set_title(f"timestep {title}")
     ax2.clear()
     ax2.set_title(f"Population")
-    ax2.plot(time, population)
+    ax2.plot(time, population, c="green", label="total")
+    ax2.plot(time, pred, c="red", label="predators")
+    ax2.plot(time, prey, c="blue", label='prey')
+    ax2.legend()
     ax3.clear()
     ax3.set_title(f"Mass(orange) and Energy(blue)")
-    ax3.plot(time, mass, c="orange")
-    ax3.plot(time, energy, c="blue")
+    ax3.plot(time, mass, c="orange", label="mass")
+    ax3.plot(time, energy, c="blue", label="energy")
+    ax3.legend()
     ax4.clear()
-    ax4.set_title(f"Predators(red) and Prey(blue)")
-    ax4.plot(time, pred, c="red")
-    ax4.plot(time, prey, c="blue")
+    ax4.set_title(f"Brain size")
+    ax4.plot(time, brain)
 ani = animation.FuncAnimation(fig, animate, interval=1)
 plt.show()
